@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="7d625598-5f05-4b52-aa28-5c3110dd4bb6" name="obspi">
+        <fileTransfer rootFolder="/home/pi/obspi-csharp" accessType="SFTP" host="10.10.10.20" port="22" sshConfigId="0033c107-6aba-404d-9669-70dd22d5cc34" sshConfig="pi@10.10.10.20:22 password">
+          <advancedOptions>
+            <advancedOptions controlEncoding="utf-8" dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" isUseRsync="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
