@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Obspi.Common.Dto;
 using Obspi.Config;
 
 namespace Obspi.Controllers;
@@ -16,34 +17,30 @@ public class IoController : ControllerBase
         _i2cOptions = i2cOptions;
         _observatory = observatory;
     }
-
+        
     [HttpGet("inputs")]
-    public IActionResult GetInputNames()
-    {
-        return Ok(_observatory.IO.Inputs.Names);
-    }
-    
-    [HttpGet("inputs/all")]
     public IActionResult GetInputs()
     {
-        return Ok(_observatory.IO.Inputs.Names
-            .ToDictionary(key => key, name => _observatory.IO.Inputs.GetValueOrNull(name)));
+        var items = _observatory.IO.Inputs
+            .Names
+            .Select(io => new IoDto { Name = io, Value = _observatory.IO.Inputs.GetValueOrNull(io) ?? false })
+            .ToList();
+
+        return Ok(items);
     }
     
     [HttpGet("outputs")]
-    public IActionResult GetOutputNames()
-    {
-        return Ok(_observatory.IO.Outputs.Names);
-    }
-    
-    [HttpGet("outputs/all")]
     public IActionResult GetOutputs()
     {
-        return Ok(_observatory.IO.Outputs.Names
-            .ToDictionary(key => key, name => _observatory.IO.Outputs.GetValueOrNull(name)));
+        var items = _observatory.IO.Outputs
+            .Names
+            .Select(io => new IoDto { Name = io, Value = _observatory.IO.Outputs.GetValueOrNull(io) ?? false })
+            .ToList();
+
+        return Ok(items);
     }
 
-    [HttpGet("input/{name}")]
+    [HttpGet("inputs/{name}")]
     public IActionResult GetInputByName(string name)
     {
         bool? value = _observatory.IO.Inputs.GetValueOrNull(name);
@@ -53,7 +50,7 @@ public class IoController : ControllerBase
         return Ok(new { State = value });
     }
     
-    [HttpGet("output/{name}")]
+    [HttpGet("outputs/{name}")]
     public IActionResult GetOutputByName(string name)
     {
         bool? value = _observatory.IO.Outputs.GetValueOrNull(name);
@@ -63,7 +60,7 @@ public class IoController : ControllerBase
         return Ok(new { State = value });
     }
 
-    [HttpPost("output/{name}")]
+    [HttpPost("outputs/{name}")]
     public IActionResult SetOutputByName(string name, [FromQuery] bool state)
     {
         bool success = _observatory.IO.Outputs.TrySetValue(name, state);

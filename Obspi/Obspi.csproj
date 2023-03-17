@@ -14,4 +14,8 @@
         <PackageReference Include="System.Device.Gpio" Version="2.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Obspi.Common\Obspi.Common.csproj" />
+    </ItemGroup>
+
 </Project>
