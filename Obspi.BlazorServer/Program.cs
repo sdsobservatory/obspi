@@ -1,12 +1,10 @@
 using MudBlazor.Services;
-using Obspi.BlazorServer.Data;
 using Obspi.BlazorServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddTransient<IObspiService, ObspiService>();
 builder.Services.AddHttpClient<IObspiService, ObspiService>(httpClient =>
 {

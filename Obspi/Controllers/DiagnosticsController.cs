@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Obspi.Common.Dto;
 
 namespace Obspi.Controllers;
 
@@ -16,15 +17,17 @@ public class DiagnosticsController : ControllerBase
     [HttpGet]
     public IActionResult GetDiagnostics()
     {
-        return Ok(new
+        var items = new List<DiagnosticsDto>
         {
-            CpuTemperature = _observatory.IndustrialAutomation.GetCpuTemperature(),
-            Voltage24 = _observatory.IndustrialAutomation.Get24VRailVoltage(),
-            Voltage5 = _observatory.IndustrialAutomation.Get5VRailVoltage(),
-            VoltageRtc = _observatory.IndustrialAutomation.GetRtcBatteryVoltage(),
-            FirmwareVersion = _observatory.IndustrialAutomation.GetFirmwareVersion(),
-            RtcDateTime = _observatory.IndustrialAutomation.GetDateTime(),
-            LoopTimeSeconds = _observatory.LoopTime.TotalSeconds,
-        });
+            new() { Name = "CPU Temperature", Value = _observatory.IndustrialAutomation.GetCpuTemperature().ToString(), Unit = "°C" },
+            new() { Name = "24V Rail", Value = _observatory.IndustrialAutomation.Get24VRailVoltage().ToString(), Unit = "V" },
+            new() { Name = "5V Rail", Value = _observatory.IndustrialAutomation.Get5VRailVoltage().ToString(), Unit = "V" },
+            new() { Name = "RTC Battery", Value = _observatory.IndustrialAutomation.GetRtcBatteryVoltage().ToString(), Unit = "V" },
+            new() { Name = "RTC Date", Value = _observatory.IndustrialAutomation.GetDateTime().ToString("O"), Unit = "--" },
+            new() { Name = "Firmware Version", Value = _observatory.IndustrialAutomation.GetFirmwareVersion().ToString(), Unit = "--" },
+            new() { Name = "Loop Time", Value = _observatory.LoopTime.TotalMilliseconds.ToString("F3"), Unit = "ms" },
+        };
+
+        return Ok(items);
     }
 }

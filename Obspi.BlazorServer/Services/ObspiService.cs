@@ -26,4 +26,9 @@ public class ObspiService : IObspiService
         var response = await _httpClient.PostAsync($"io/outputs/{name}?state={value}", null);
         response.EnsureSuccessStatusCode();
     }
+
+    public async Task<IEnumerable<DiagnosticsDto>?> GetDiagnostics()
+    {
+        return await _httpClient.GetFromJsonAsync<IEnumerable<DiagnosticsDto>>("diagnostics");
+    }
 }
