@@ -5,7 +5,8 @@
 @using Obspi.BlazorServer.Services
 @using Obspi.Common.Dto
 @implements IDisposable
-@inject IObspiService ObspiService;
+@inject ILogger<IoControl> Logger
+@inject IObspiService ObspiService
 
 <MudContainer MaxWidth="MaxWidth.Small"
               Class="mt-0">
@@ -112,7 +113,14 @@
 
     private async void TimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        await GetIo();
-        await InvokeAsync(StateHasChanged);
+        try
+        {
+            await GetIo();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Exception polling for io state");
+        }
     }
 }

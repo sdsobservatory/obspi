@@ -9,12 +9,17 @@ namespace Obspi.Controllers;
 [Route("api/io")]
 public class IoController : ControllerBase
 {
-    private readonly IOptions<I2cDevicesOptions> _i2cOptions;
+    private readonly ILogger<IoController> _logger;
+	private readonly IOptions<I2cDevicesOptions> _i2cOptions;
     private readonly Observatory _observatory;
 
-    public IoController(IOptions<I2cDevicesOptions> i2cOptions, Observatory observatory)
+    public IoController(
+        ILogger<IoController> logger,
+        IOptions<I2cDevicesOptions> i2cOptions,
+        Observatory observatory)
     {
-        _i2cOptions = i2cOptions;
+		_logger = logger;
+		_i2cOptions = i2cOptions;
         _observatory = observatory;
     }
         
@@ -63,6 +68,7 @@ public class IoController : ControllerBase
     [HttpPost("outputs/{name}")]
     public IActionResult SetOutputByName(string name, [FromQuery] bool state)
     {
+        _logger.LogInformation("Setting output {Name} to {State}", name, state);
         bool success = _observatory.IO.Outputs.TrySetValue(name, state);
         return success ? AcceptedAtAction(nameof(GetOutputByName), "io", new { Name = name }) : BadRequest();
     }

@@ -1,14 +1,11 @@
-﻿namespace Obspi.Commands;
+﻿using Obspi.Common;
 
-public enum CommandState
-{
-    Created,
-    Running,
-    Complete,
-}
+namespace Obspi.Commands;
 
 public abstract class Command
 {
+    public Guid Id { get; } = Guid.NewGuid();
+
     public CommandState State { get; private set; } = CommandState.Created;
 
     protected abstract void Execute(Observatory observatory);

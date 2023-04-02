@@ -23,10 +23,9 @@ public class Observatory
     public IndustrialAutomation IndustrialAutomation { get; }
     public ConcurrentQueue<Command> Commands { get; } = new();
 
-    /// <summary>
-    /// When true, it is safe to open or close the roof.
-    /// </summary>
-    public bool CanRoofMove { get; set; }
+    public bool CanRoofOpen { get; set; }
+
+    public bool CanRoofClose { get; set; }
 
     public bool IsRoofOpen { get; set; }
     

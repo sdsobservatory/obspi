@@ -1,0 +1,28 @@
+﻿<MudCard Style="@(IsUnlocked ? "outline: 1px solid var(--mud-palette-warning)" : "")">
+	<MudCardHeader>
+		<MudCardContent>
+			<MudText Typo="Typo.h6">@Title</MudText>
+		</MudCardContent>
+		<MudCardActions Class="d-flex justify-end flex-grow-1">
+			<MudToggleIconButton @bind-Toggled="@IsUnlocked"
+								 Icon="@Icons.Material.Filled.Lock"
+								 Color="Color.Default"
+								 ToggledIcon="@Icons.Material.Filled.LockOpen"
+								 ToggledColor="@Color.Warning" />
+		</MudCardActions>
+	</MudCardHeader>
+	<MudCardContent>
+		@ChildContent
+	</MudCardContent>
+</MudCard>
+
+@code {
+	[Parameter]
+	public string Title { get; set; } = "Pier";
+
+	[Parameter]
+	public bool IsUnlocked { get; set; }
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+}

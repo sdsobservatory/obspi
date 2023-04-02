@@ -1,4 +1,5 @@
 ﻿using Obspi.Commands;
+using Obspi.Common;
 
 namespace Obspi;
 
@@ -61,7 +62,7 @@ public class ObservatoryService : BackgroundService
         var outputs = _observatory.IO.Outputs.ToSnapshot();
         var inputs = _observatory.IO.Inputs.ToSnapshot();
         
-        var roofSafeConditions = new[]
+        var canRoofOpenConditions = new[]
         {
             inputs.CloudWatcherSafe,
             inputs.Tilt1,
@@ -69,9 +70,18 @@ public class ObservatoryService : BackgroundService
             inputs.Tilt3,
             inputs.Tilt4,
         };
-        
-        _observatory.CanRoofMove = roofSafeConditions.All(x => x);
-        _observatory.IsRoofOpen = inputs is { RoofOpen: true, RoofClosed: false };
+
+		var canRoofCloseConditions = new[]
+		{
+			inputs.Tilt1,
+			inputs.Tilt2,
+			inputs.Tilt3,
+			inputs.Tilt4,
+		};
+
+		_observatory.CanRoofOpen = canRoofOpenConditions.All(x => x);
+        _observatory.CanRoofClose = canRoofCloseConditions.All(x => x);
+		_observatory.IsRoofOpen = inputs is { RoofOpen: true, RoofClosed: false };
         _observatory.IsRoofClosed = inputs is { RoofOpen: false, RoofClosed: true };
 
         if (_observatory.Commands.TryPeek(out var command)
