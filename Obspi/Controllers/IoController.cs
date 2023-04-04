@@ -72,4 +72,25 @@ public class IoController : ControllerBase
         bool success = _observatory.IO.Outputs.TrySetValue(name, state);
         return success ? AcceptedAtAction(nameof(GetOutputByName), "io", new { Name = name }) : BadRequest();
     }
+
+    [HttpGet("analogoutput/{channel}")]
+    public IActionResult GetAnalogOutput(int channel)
+    {
+        if (!Enum.IsDefined((Devices.IndustrialAutomation.AnalogChannel)channel))
+            return BadRequest();
+
+        var value = _observatory.IndustrialAutomation.GetAnalogOut((Devices.IndustrialAutomation.AnalogChannel)channel);
+        return Ok(new { Value = value });
+    }
+
+    [HttpPost("analogoutput/{channel}")]
+    public IActionResult SetAnalogOutput(int channel, [FromQuery] double value)
+    {
+        if (!Enum.IsDefined((Devices.IndustrialAutomation.AnalogChannel)channel))
+            return BadRequest();
+
+        _logger.LogInformation("Setting analog output channel {Channel} to {Value}", channel, value);
+        _observatory.IndustrialAutomation.SetAnalogOut((Devices.IndustrialAutomation.AnalogChannel)channel, value);
+        return Ok();
+    }
 }

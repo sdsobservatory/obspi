@@ -11,6 +11,10 @@ public class IndustrialAutomation
 
     private enum Register : byte
     {
+        AnalogOutChannel1 = 0x04,
+        AnalogOutChannel2 = 0x06,
+        AnalogOutChannel3 = 0x08,
+        AnalogOutChannel4 = 0x0a,
         GetRtc = 0x46,
         SetRtc = 0x4c,
         DiagnosticsCpuTemperature = 0x72,
@@ -20,6 +24,14 @@ public class IndustrialAutomation
         FirmwareMinor = 0x79,
         BatteryVoltage = 0x91,
     }
+
+    public enum AnalogChannel
+    {
+        One = 1,
+        Two = 2,
+        Three = 3,
+        Four = 4,
+    };
 
     public IndustrialAutomation(II2cDevice device)
     {
@@ -143,5 +155,42 @@ public class IndustrialAutomation
             CalibrationKey,
         };
         _device.Write(writeBuffer);
+    }
+
+    private static Register LookupAnalogOutputRegister(AnalogChannel channel) => channel switch
+    {
+        AnalogChannel.One => Register.AnalogOutChannel1,
+        AnalogChannel.Two => Register.AnalogOutChannel2,
+        AnalogChannel.Three => Register.AnalogOutChannel3,
+        AnalogChannel.Four => Register.AnalogOutChannel4,
+        _ => throw new ArgumentOutOfRangeException(nameof(channel)),
+    };
+
+    public void SetAnalogOut(AnalogChannel channel, double value)
+    {
+        var millivolts = (int)Math.Ceiling(value * 1000);
+        millivolts = Math.Clamp(millivolts, 0, 10000);
+
+        Span<byte> writeBuffer = stackalloc byte[3]
+        {
+            (byte)LookupAnalogOutputRegister(channel),
+            (byte)(millivolts & 0x00ff),
+            (byte)((millivolts & 0xff00) >> 8),
+        };
+        _device.Write(writeBuffer);
+    }
+
+    public double GetAnalogOut(AnalogChannel channel)
+    {
+        Span<byte> readBuffer = stackalloc byte[2];
+        Span<byte> writeBuffer = stackalloc byte[1]
+        {
+            (byte)LookupAnalogOutputRegister(channel)
+        };
+
+        _device.WriteRead(writeBuffer, readBuffer);
+
+        int millivolts = (readBuffer[1] << 8) + readBuffer[0];
+        return millivolts / 1000.0;
     }
 }
