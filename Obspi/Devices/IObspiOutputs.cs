@@ -2,23 +2,22 @@
 
 public interface IObspiOutputs
 {
-    bool RoofMotor { get; set; }
-    bool Pier1AC { get; set; }
-    bool Pier2AC { get; set; }
-    bool Pier3AC { get; set; }
-    bool Pier4AC { get; set; }
-    bool Pier1DC { get; set; }
-    bool Pier2DC { get; set; }
-    bool Pier3DC { get; set; }
-    bool Pier4DC { get; set; }
-    bool TenMicron1 { get; set; }
-    bool TenMicron2 { get; set; }
-    bool Bank0Channel11 { get; set; }
-    bool Bank0Channel12 { get; set; }
-    bool Bank0Channel13 { get; set; }
+    bool Suicide { get; set; }
+    bool RoofOpen { get; set; }
+    bool RoofClose { get; set; }
+    bool Josh1ACReset { get; set; }
+    bool Josh1DCReset { get; set; }
+    bool Josh2ACReset { get; set; }
+    bool Josh2DCReset { get; set; }
+    bool AlexACReset { get; set; }
+    bool AlexDCReset { get; set; }
+    bool CharlieACReset { get; set; }
+    bool CharlieDCReset { get; set; }
+    bool Josh10MicronReset { get; set; }
+    bool Alex10MicronReset { get; set; }
     bool Bank0Channel14 { get; set; }
     bool Bank0Channel15 { get; set; }
-    bool Bank1Channel0 { get; set; }
+    bool Bank0Channel16 { get; set; }
     bool Bank1Channel1 { get; set; }
     bool Bank1Channel2 { get; set; }
     bool Bank1Channel3 { get; set; }
@@ -34,4 +33,5 @@ public interface IObspiOutputs
     bool Bank1Channel13 { get; set; }
     bool Bank1Channel14 { get; set; }
     bool Bank1Channel15 { get; set; }
+    bool Bank1Channel16 { get; set; }
 }

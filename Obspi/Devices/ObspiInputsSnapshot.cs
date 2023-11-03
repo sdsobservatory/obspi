@@ -19,21 +19,21 @@ public class ObspiInputsSnapshot : IObspiInputs
             thisProps[otherProp.Name].SetValue(this, otherProp.GetValue(inputs));
         }
     }
-    
-    public bool RoofOpen { get; set; }
+
+    public bool RoofOpened { get; set; }
     public bool RoofClosed { get; set; }
-    public bool CloudWatcherSafe { get; set; }
-    public bool Tilt1 { get; set; }
-    public bool Tilt1Inverted { get; set; }
-    public bool Tilt2 { get; set; }
-    public bool Tilt2Inverted { get; set; }
-    public bool Tilt3 { get; set; }
-    public bool Tilt3Inverted { get; set; }
-    public bool Tilt4 { get; set; }
-    public bool Tilt4Inverted { get; set; }
+    public bool CloudWatcherUnsafe { get; set; }
+    public bool TiltJosh { get; set; }
+    public bool TiltAlex { get; set; }
+    public bool Input6 { get; set; }
+    public bool Input7 { get; set; }
+    public bool Input8 { get; set; }
+    public bool Input9 { get; set; }
+    public bool Input10 { get; set; }
     public bool Input11 { get; set; }
     public bool Input12 { get; set; }
     public bool Input13 { get; set; }
     public bool Input14 { get; set; }
     public bool Input15 { get; set; }
+    public bool Input16 { get; set; }
 }

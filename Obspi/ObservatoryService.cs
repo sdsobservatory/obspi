@@ -32,14 +32,14 @@ public class ObservatoryService : BackgroundService
                     {
                         var start = DateTime.UtcNow;
 
-                        Loop();
+                        Loop(stoppingToken);
 
                         var elapsed = DateTime.UtcNow - start;
                         var next = start + Interval;
                         var remaining = next - DateTime.UtcNow;
                         if (remaining > TimeSpan.Zero)
                             await Task.Delay(remaining, stoppingToken);
-                        
+
                         loopTimeQueue.Enqueue(elapsed.TotalSeconds);
                         _observatory.LoopTime = TimeSpan.FromSeconds(loopTimeQueue.Average());
                     }
@@ -52,51 +52,62 @@ public class ObservatoryService : BackgroundService
             {
                 Console.WriteLine(e);
                 if (!stoppingToken.IsCancellationRequested)
-                    await Task.Delay(1000);
+                {
+                    await Task.Delay(1000, stoppingToken);
+                }
             }
         }
     }
 
-    private void Loop()
+    private void Loop(CancellationToken token)
     {
         var outputs = _observatory.IO.Outputs.ToSnapshot();
         var inputs = _observatory.IO.Inputs.ToSnapshot();
         
-        var canRoofOpenConditions = new[]
+        var isRoofSafeToMoveConditions = new[]
         {
-            inputs.CloudWatcherSafe,
-            inputs.Tilt1,
-            inputs.Tilt2,
-            inputs.Tilt3,
-            inputs.Tilt4,
+            !inputs.CloudWatcherUnsafe,
+            // TODO: uncomment when tilt switches work!
+            //inputs.TiltJosh,
+            //inputs.TiltAlex,
         };
 
-		var canRoofCloseConditions = new[]
-		{
-			inputs.Tilt1,
-			inputs.Tilt2,
-			inputs.Tilt3,
-			inputs.Tilt4,
-		};
+		_observatory.IsRoofSafeToMove = isRoofSafeToMoveConditions.All(x => x);
+		_observatory.IsRoofOpen = inputs is { RoofOpened: true, RoofClosed: false };
+        _observatory.IsRoofClosed = inputs is { RoofOpened: false, RoofClosed: true };
 
-		_observatory.CanRoofOpen = canRoofOpenConditions.All(x => x);
-        _observatory.CanRoofClose = canRoofCloseConditions.All(x => x);
-		_observatory.IsRoofOpen = inputs is { RoofOpen: true, RoofClosed: false };
-        _observatory.IsRoofClosed = inputs is { RoofOpen: false, RoofClosed: true };
-
-        if (_observatory.Commands.TryPeek(out var command)
-            && command.State == CommandState.Created)
+        // Peek the top command and see if it is "Created".
+        // This allows for exactly one command to execute at a time.
+        if (_observatory.Commands.TryPeek(out var packedCommand)
+            && packedCommand.Item1.State == CommandState.Created)
         {
-            Task.Run(() =>
+            // Execute the command on a background thread so the loop continues.
+            Task.Run(async () =>
             {
-                Command localCommand = command;
+                var (command, commandToken) = packedCommand;
                 _logger.LogInformation("Running {Command}", command);
-                localCommand.Run(_observatory);
-                while (!_observatory.Commands.TryDequeue(out var _))
+                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(token, commandToken);
+
+                commandToken.Register(() => _logger.LogInformation("Command canceled"));
+
+                try
                 {
+                    // Run the command
+                    await command.Run(_observatory, linkedCts.Token);
+                    _logger.LogInformation("Command complete");
                 }
-                _logger.LogInformation("Command complete");
-            });
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Command exited via exception");
+                }
+                finally
+                {
+                    // Remove the command from the queue
+                    while (!_observatory.Commands.TryDequeue(out var _))
+                    {
+                    }
+                }
+            }, token);
         }
     }
 }

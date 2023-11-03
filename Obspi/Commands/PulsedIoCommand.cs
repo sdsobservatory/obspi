@@ -16,11 +16,11 @@ public class PulsedIoCommand : Command
         Selector = selector;
     }
 
-    protected override void Execute(Observatory observatory)
+    protected override async Task Execute(Observatory observatory, CancellationToken token)
     {
         var prop = Selector.GetPropertyInfo();
         prop.SetValue(observatory.IO.Outputs, Value);
-        Thread.Sleep(Delay);
+        await Task.Delay(Delay, token);
         prop.SetValue(observatory.IO.Outputs, !Value);
     }
 

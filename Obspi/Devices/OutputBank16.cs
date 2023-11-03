@@ -9,14 +9,20 @@ public class OutputBank16 : IoBank16
     {
         Span<byte> buffer = stackalloc byte[3];
 
-        // Configure as output
-        buffer[0] = (byte) Register.Config;
+        // Normal polarity
+        buffer[0] = (byte)Register.Polarity;
         buffer[1] = 0;
         buffer[2] = 0;
         i2c.Write(buffer);
 
-        // Normal polarity
-        buffer[0] = (byte) Register.Polarity;
+        // Turn off all outputs
+        buffer[0] = (byte)Register.OutputPort;
+        buffer[1] = 0;
+        buffer[2] = 0;
+        i2c.Write(buffer);
+
+        // Configure as output
+        buffer[0] = (byte)Register.Config;
         buffer[1] = 0;
         buffer[2] = 0;
         i2c.Write(buffer);

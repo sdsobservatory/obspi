@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Obspi.Commands;
 using Obspi.Common.Dto;
+using Obspi.Devices;
+using Obspi.Services;
 
 namespace Obspi.Controllers;
 
@@ -9,10 +11,12 @@ namespace Obspi.Controllers;
 public class ObservatoryController : ControllerBase
 {
     private readonly Observatory _observatory;
+	private readonly WeatherService _weather;
 
-    public ObservatoryController(Observatory observatory)
+    public ObservatoryController(Observatory observatory, WeatherService weather)
     {
         _observatory = observatory;
+		_weather = weather;
     }
 
     [HttpGet]
@@ -20,8 +24,7 @@ public class ObservatoryController : ControllerBase
     {
         var dto = new ObservatoryStateDto
         {
-            CanRoofOpen = _observatory.CanRoofOpen,
-			CanRoofClose = _observatory.CanRoofClose,
+			IsRoofSafeToMove = _observatory.IsRoofSafeToMove,
 			IsRoofOpen = _observatory.IsRoofOpen,
             IsRoofClosed = _observatory.IsRoofClosed,
         };
@@ -29,104 +32,174 @@ public class ObservatoryController : ControllerBase
         return Ok(dto);
     }
 
-    [HttpGet("command/status/{id}")]
-    public IActionResult GetCommandStatus(Guid id)
-    {
-        var cmd = _observatory.Commands.FirstOrDefault(x => x.Id == id);
-        var state = cmd?.State ?? Common.CommandState.Complete;
-        var dto = new CommandStateDto { State = state };
-        return Ok(dto);
-    }
+	#region Commands
 
-    [HttpPost("command/toggle_roof")]
-    public IActionResult ToggleRoof()
-    {
+    [HttpPost("command/open_roof")]
+	public async Task<IActionResult> OpenRoof()
+	{
         // TODO: Some kind of standardized json format that has an error string
-        if (!(_observatory.CanRoofOpen || _observatory.CanRoofClose))
+        if (!_observatory.IsRoofSafeToMove)
             return BadRequest();
 
-        var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.RoofMotor);
-        _observatory.EnqueueCommand(cmd);
-        return Accepted(new CommandQueuedDto { Id = cmd.Id });
-    }
-    
-    [HttpPost("command/restart_pier1_ac")]
-	public IActionResult RestartPier1AC()
+		var cmd = new OpenRoofCommand
+		{
+			Timeout = TimeSpan.FromSeconds(90),
+			OnTimeout = () =>
+			{
+				// TODO: notification system
+                Console.WriteLine("Opening roof timed out!");
+            }
+		};
+
+        _observatory.RoofCts?.Dispose();
+        _observatory.RoofCts = new();
+        _observatory.EnqueueCommand(cmd, _observatory.RoofCts.Token);
+        await cmd.WaitAsync();
+        _observatory.RoofCts?.Dispose();
+		_observatory.RoofCts = null;
+        return Ok();
+	}
+
+    [HttpPost("command/close_roof")]
+    public async Task<IActionResult> CloseRoof()
     {
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Pier1AC);
-		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
+        // TODO: Some kind of standardized json format that has an error string
+        if (!_observatory.IsRoofSafeToMove)
+            return BadRequest();
+
+        var cmd = new CloseRoofCommand
+        {
+            Timeout = TimeSpan.FromSeconds(90),
+            OnTimeout = () =>
+            {
+				// TODO: notification system
+                Console.WriteLine("Closing roof timed out!");
+            }
+        };
+
+        _observatory.RoofCts?.Dispose();
+        _observatory.RoofCts = new();
+        _observatory.EnqueueCommand(cmd, _observatory.RoofCts.Token);
+        await cmd.WaitAsync();
+        _observatory.RoofCts?.Dispose();
+        _observatory.RoofCts = null;
+        return Ok();
+    }
+
+	[HttpPost("command/stop_roof")]
+	public IActionResult StopRoof()
+	{
+		_observatory.RoofCts?.Cancel();
+		return Ok();
 	}
 
-	[HttpPost("command/restart_pier1_dc")]
-	public IActionResult RestartPier1DC()
-	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Pier1DC);
+    [HttpPost("command/restart_josh1_ac")]
+	public async Task<IActionResult> RestartPier1AC()
+    {
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh1ACReset);
 		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
+        await cmd.WaitAsync();
+        return Ok();
+    }
+
+	[HttpPost("command/restart_josh1_dc")]
+	public async Task<IActionResult> RestartPier1DC()
+	{
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh1DCReset);
+		_observatory.EnqueueCommand(cmd);
+        await cmd.WaitAsync();
+        return Ok();
+    }
+
+	[HttpPost("command/restart_josh2_ac")]
+	public async Task<IActionResult> RestartPier2AC()
+	{
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh2ACReset);
+		_observatory.EnqueueCommand(cmd);
+        await cmd.WaitAsync();
+        return Ok();
+    }
+
+	[HttpPost("command/restart_josh2_dc")]
+	public async Task<IActionResult> RestartPier2DC()
+	{
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh2DCReset);
+		_observatory.EnqueueCommand(cmd);
+        await cmd.WaitAsync();
+        return Ok();
+    }
+
+	[HttpPost("command/restart_alex_ac")]
+	public async Task<IActionResult> RestartPier3AC()
+	{
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.AlexACReset);
+		_observatory.EnqueueCommand(cmd);
+        await cmd.WaitAsync();
+        return Ok();
+    }
+
+	[HttpPost("command/restart_alex_dc")]
+	public async Task<IActionResult> RestartPier3DC()
+	{
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.AlexDCReset);
+		_observatory.EnqueueCommand(cmd);
+        await cmd.WaitAsync();
+        return Ok();
+    }
+
+	[HttpPost("command/restart_charlie_ac")]
+	public async Task<IActionResult> RestartPier4AC()
+	{
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.CharlieACReset);
+		_observatory.EnqueueCommand(cmd);
+        await cmd.WaitAsync();
+        return Ok();
+    }
+
+	[HttpPost("command/restart_charlie_dc")]
+	public async Task<IActionResult> RestartPier4DC()
+	{
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.CharlieDCReset);
+		_observatory.EnqueueCommand(cmd);
+        await cmd.WaitAsync();
+        return Ok();
+    }
+
+	[HttpPost("command/restart_josh_10micron")]
+	public async Task<IActionResult> Restart10Micron1()
+	{
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh10MicronReset);
+		_observatory.EnqueueCommand(cmd);
+		await cmd.WaitAsync();
+		return Ok();
 	}
 
-	[HttpPost("command/restart_pier2_ac")]
-	public IActionResult RestartPier2AC()
+	[HttpPost("command/restart_alex_10micron")]
+	public async Task<IActionResult> Restart10Micron2()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Pier2AC);
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Alex10MicronReset);
 		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
+        await cmd.WaitAsync();
+        return Ok();
+    }
+
+	#endregion
+
+	#region Weather
+
+	[HttpGet("weather")]
+	public async Task<IActionResult> GetWeather(CancellationToken token)
+	{
+		var report = await _weather.GetWeatherAsync(token);
+		return Ok(report);
 	}
 
-	[HttpPost("command/restart_pier2_dc")]
-	public IActionResult RestartPier2DC()
+	[HttpPut("aag")]
+	public IActionResult PutAagCloudWatherData([FromBody] AagCloudWatcherData data)
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Pier2DC);
-		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
+		_observatory.CloudWatcher.MostRecentData = data;
+		return Ok();
 	}
 
-	[HttpPost("command/restart_pier3_ac")]
-	public IActionResult RestartPier3AC()
-	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Pier3AC);
-		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
-	}
-
-	[HttpPost("command/restart_pier3_dc")]
-	public IActionResult RestartPier3DC()
-	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Pier3DC);
-		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
-	}
-
-	[HttpPost("command/restart_pier4_ac")]
-	public IActionResult RestartPier4AC()
-	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Pier4AC);
-		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
-	}
-
-	[HttpPost("command/restart_pier4_dc")]
-	public IActionResult RestartPier4DC()
-	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Pier4DC);
-		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
-	}
-
-	[HttpPost("command/restart_10micron_1")]
-	public IActionResult Restart10Micron1()
-	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.TenMicron1);
-		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
-	}
-
-	[HttpPost("command/restart_10micron_2")]
-	public IActionResult Restart10Micron2()
-	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.TenMicron2);
-		_observatory.EnqueueCommand(cmd);
-		return Accepted(new CommandQueuedDto { Id = cmd.Id });
-	}
+	#endregion
 }

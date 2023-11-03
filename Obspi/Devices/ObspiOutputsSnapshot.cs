@@ -19,24 +19,23 @@ public class ObspiOutputsSnapshot : IObspiOutputs
             thisProps[otherProp.Name].SetValue(this, otherProp.GetValue(outputs));
         }
     }
-    
-    public bool RoofMotor { get; set; }
-    public bool Pier1AC { get; set; }
-    public bool Pier2AC { get; set; }
-    public bool Pier3AC { get; set; }
-    public bool Pier4AC { get; set; }
-    public bool Pier1DC { get; set; }
-    public bool Pier2DC { get; set; }
-    public bool Pier3DC { get; set; }
-    public bool Pier4DC { get; set; }
-    public bool TenMicron1 { get; set; }
-    public bool TenMicron2 { get; set; }
-    public bool Bank0Channel11 { get; set; }
-    public bool Bank0Channel12 { get; set; }
-    public bool Bank0Channel13 { get; set; }
+
+    public bool Suicide { get; set; }
+    public bool RoofOpen { get; set; }
+    public bool RoofClose { get; set; }
+    public bool Josh1ACReset { get; set; }
+    public bool Josh1DCReset { get; set; }
+    public bool Josh2ACReset { get; set; }
+    public bool Josh2DCReset { get; set; }
+    public bool AlexACReset { get; set; }
+    public bool AlexDCReset { get; set; }
+    public bool CharlieACReset { get; set; }
+    public bool CharlieDCReset { get; set; }
+    public bool Josh10MicronReset { get; set; }
+    public bool Alex10MicronReset { get; set; }
     public bool Bank0Channel14 { get; set; }
     public bool Bank0Channel15 { get; set; }
-    public bool Bank1Channel0 { get; set; }
+    public bool Bank0Channel16 { get; set; }
     public bool Bank1Channel1 { get; set; }
     public bool Bank1Channel2 { get; set; }
     public bool Bank1Channel3 { get; set; }
@@ -52,4 +51,5 @@ public class ObspiOutputsSnapshot : IObspiOutputs
     public bool Bank1Channel13 { get; set; }
     public bool Bank1Channel14 { get; set; }
     public bool Bank1Channel15 { get; set; }
+    public bool Bank1Channel16 { get; set; }
 }
