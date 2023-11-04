@@ -1,4 +1,4 @@
-import { Grid, Stack } from "@mui/material"
+import { Grid, Stack, Box, Card, CardMedia } from "@mui/material"
 import GrafanaComponent from "../components/GrafanaComponent"
 import CameraComponent from "../components/CameraComponent"
 import AllSkyComponent from "../components/AllSkyComponent"
@@ -6,49 +6,50 @@ import {
   GRAFANA_ASTRODARKEND_EMBED_URL, GRAFANA_ASTRODARKSTART_EMBED_URL, GRAFANA_HUMIDITY_EMBED_URL,
   GRAFANA_MOON_ILLUMINATION_EMBED_URL, GRAFANA_SAFETY_EMBED_URL, GRAFANA_SQM_EMBED_URL,
   GRAFANA_SUNRISE_EMBED_URL, GRAFANA_SUNSET_EMBED_URL, GRAFANA_TEMPERATURE_EMBED_URL,
-  GRAFANA_WIND_EMBED_URL, CAMERA_SOUTH_URL, CAMERA_ALLSKY_URL } from "../constants"
+  GRAFANA_WIND_EMBED_URL, CAMERA_SOUTH_URL, CAMERA_ALLSKY_URL, GRAFANA_MEDIAN_GUIDE_ERROR_EMBED_URL } from "../constants"
 
 function Dashboard() {
   return (
     <Grid container>
       <Grid item md={6} pb={1}>
         <Stack
-          direction="row"
-          spacing={1}
-          justifyContent="center"
-          alignItems="center"
-          useFlexGap
-          flexWrap="wrap">
+          direction="column">
 
-          {/* Temperature */}
-          <GrafanaComponent url={GRAFANA_TEMPERATURE_EMBED_URL} />
+          <Stack
+            direction="row"
+            spacing={2}
+            padding={1}
+            justifyContent="space-evenly"
+            alignItems="center"
+            useFlexGap
+            flexWrap="wrap">
 
-          {/* SQM */}
-          <GrafanaComponent url={GRAFANA_SQM_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_TEMPERATURE_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_SQM_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_HUMIDITY_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_WIND_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_MOON_ILLUMINATION_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_SAFETY_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_SUNSET_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_SUNRISE_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_ASTRODARKSTART_EMBED_URL} />
+            <GrafanaComponent url={GRAFANA_ASTRODARKEND_EMBED_URL} />
 
-          {/* Humidity */}
-          <GrafanaComponent url={GRAFANA_HUMIDITY_EMBED_URL} />
+          </Stack>
 
-          {/* Wind */}
-          <GrafanaComponent url={GRAFANA_WIND_EMBED_URL} />
-
-          {/* Moon Illumination */}
-          <GrafanaComponent url={GRAFANA_MOON_ILLUMINATION_EMBED_URL} />
-
-          {/* Safety */}
-          <GrafanaComponent url={GRAFANA_SAFETY_EMBED_URL} />
-
-          {/* Sunset */}
-          <GrafanaComponent url={GRAFANA_SUNSET_EMBED_URL} />
-
-          {/* Sunrise */}
-          <GrafanaComponent url={GRAFANA_SUNRISE_EMBED_URL} />
-
-          {/* Astro Dark Starts */}
-          <GrafanaComponent url={GRAFANA_ASTRODARKSTART_EMBED_URL} />
-
-          {/* Astro Dark Ends */}
-          <GrafanaComponent url={GRAFANA_ASTRODARKEND_EMBED_URL} />
+          <Box padding={1}>
+            <Card>
+              <CardMedia
+                  src={GRAFANA_MEDIAN_GUIDE_ERROR_EMBED_URL}
+                  sx={{
+                      border: "0px",
+                      pointerEvents: "none",
+                      height: "400px"
+                  }}
+                  component="iframe"
+              />
+            </Card>
+          </Box>
 
         </Stack>
       </Grid>

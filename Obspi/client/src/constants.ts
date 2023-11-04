@@ -18,3 +18,4 @@ export const GRAFANA_SUNSET_EMBED_URL = "https://grafana.local.sdso.space/d-solo
 export const GRAFANA_SUNRISE_EMBED_URL = "https://grafana.local.sdso.space/d-solo/f641e97b-06f3-49c7-bb26-a96e9f66bf98/overview?orgId=1&refresh=10s&panelId=7";
 export const GRAFANA_ASTRODARKSTART_EMBED_URL = "https://grafana.local.sdso.space/d-solo/f641e97b-06f3-49c7-bb26-a96e9f66bf98/overview?orgId=1&refresh=10s&panelId=5";
 export const GRAFANA_ASTRODARKEND_EMBED_URL = "https://grafana.local.sdso.space/d-solo/f641e97b-06f3-49c7-bb26-a96e9f66bf98/overview?orgId=1&refresh=10s&panelId=6";
+export const GRAFANA_MEDIAN_GUIDE_ERROR_EMBED_URL = "https://grafana.local.sdso.space/d-solo/f641e97b-06f3-49c7-bb26-a96e9f66bf98/overview?orgId=1&refresh=10s&panelId=11";
