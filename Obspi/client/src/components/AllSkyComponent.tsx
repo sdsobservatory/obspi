@@ -17,7 +17,8 @@ function AllSkyComponent(props: AllSkyProps) {
     };
 
     useEffect(() => {
-        setInterval(reloadImg, 60000);
+        const intervalId = setInterval(reloadImg, 60000);
+        return () => clearInterval(intervalId);
     });
 
     return (

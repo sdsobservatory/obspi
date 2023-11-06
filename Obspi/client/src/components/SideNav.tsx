@@ -1,4 +1,4 @@
-import { CameraAlt, Dashboard, Home, InfoOutlined, Tune } from "@mui/icons-material";
+import { CameraAlt, Dashboard, Home, InfoOutlined, Tune, Thermostat } from "@mui/icons-material";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import theme from "../theme";
 import { Link, useLocation } from "react-router-dom";
@@ -79,6 +79,13 @@ function SideNav(props: SideNavProps): JSX.Element {
                     icon={<InfoOutlined />}
                     onClick={() => toggleIfBroken()}>
                     Diagnostics
+                </MenuItem>
+                <MenuItem
+                    active={location.pathname === "/weather"}
+                    component={<Link to="/weather" />}
+                    icon={<Thermostat />}
+                    onClick={() => toggleIfBroken()}>
+                    Weather
                 </MenuItem>
             </Menu>
         </Sidebar>

@@ -4,6 +4,7 @@ import Cameras from "../containers/Cameras";
 import Observatory from "../containers/Observatory";
 import Io from "../containers/Io";
 import Diagnostics from "../containers/Diagnostics";
+import Weather from "../containers/Weather";
 import ErrorPage from "./ErrorPage";
 import NoMatch from "./NoMatch";
 
@@ -15,6 +16,7 @@ function AppRoutes() {
             <Route path="/observatory" element={<Observatory />} errorElement={<ErrorPage />} />
             <Route path="/io" element={<Io />} errorElement={<ErrorPage />} />
             <Route path="/diagnostics" element={<Diagnostics />} errorElement={<ErrorPage />} />
+            <Route path="/weather" element={<Weather />} errorElement={<ErrorPage />} />
             <Route path="*" element={<NoMatch />} errorElement={<ErrorPage />} />
         </Routes>
     );
