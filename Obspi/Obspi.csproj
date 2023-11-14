@@ -17,32 +17,11 @@
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
         <PackageReference Include="System.Device.Gpio" Version="3.0.0" />
+		<PackageReference Include="Flurl.Http" Version="4.0.0-pre6" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Obspi.Common\Obspi.Common.csproj" />
     </ItemGroup>
-
-	<!--<PropertyGroup>
-		<SpaRoot>client/</SpaRoot>
-	</PropertyGroup>-->
-
-	<!--<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
-		--><!-- As part of publishing, ensure the JS resources are freshly built in production mode --><!--
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
-
-		--><!-- Include the newly-built files in the publish output --><!--
-		<ItemGroup>
-			<DistFiles Include="$(SpaRoot)dist\**" />
-			--><!-- Changed to dist! --><!--
-			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
-				<RelativePath>%(DistFiles.Identity)</RelativePath>
-				--><!-- Changed! --><!--
-				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-				<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			</ResolvedFileToPublish>
-		</ItemGroup>
-	</Target>-->
 
 </Project>

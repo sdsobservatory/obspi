@@ -12,11 +12,13 @@ public class ObservatoryController : ControllerBase
 {
     private readonly Observatory _observatory;
 	private readonly WeatherService _weather;
+    private readonly INotificationService _notificationService;
 
-    public ObservatoryController(Observatory observatory, WeatherService weather)
+    public ObservatoryController(Observatory observatory, WeatherService weather, INotificationService notificationService)
     {
         _observatory = observatory;
 		_weather = weather;
+        _notificationService = notificationService;
     }
 
     [HttpGet]
@@ -41,7 +43,7 @@ public class ObservatoryController : ControllerBase
         if (!_observatory.IsRoofSafeToMove)
             return BadRequest();
 
-		var cmd = new OpenRoofCommand
+		var cmd = new OpenRoofCommand(_notificationService)
 		{
 			Timeout = TimeSpan.FromSeconds(90),
 			OnTimeout = () =>
@@ -67,7 +69,7 @@ public class ObservatoryController : ControllerBase
         if (!_observatory.IsRoofSafeToMove)
             return BadRequest();
 
-        var cmd = new CloseRoofCommand
+        var cmd = new CloseRoofCommand(_notificationService)
         {
             Timeout = TimeSpan.FromSeconds(90),
             OnTimeout = () =>
@@ -96,7 +98,7 @@ public class ObservatoryController : ControllerBase
     [HttpPost("command/restart_josh1_ac")]
 	public async Task<IActionResult> RestartPier1AC()
     {
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh1ACReset);
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(10), true, x => x.Josh1ACReset);
 		_observatory.EnqueueCommand(cmd);
         await cmd.WaitAsync();
         return Ok();
@@ -105,7 +107,7 @@ public class ObservatoryController : ControllerBase
 	[HttpPost("command/restart_josh1_dc")]
 	public async Task<IActionResult> RestartPier1DC()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh1DCReset);
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(10), true, x => x.Josh1DCReset);
 		_observatory.EnqueueCommand(cmd);
         await cmd.WaitAsync();
         return Ok();
@@ -114,7 +116,7 @@ public class ObservatoryController : ControllerBase
 	[HttpPost("command/restart_josh2_ac")]
 	public async Task<IActionResult> RestartPier2AC()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh2ACReset);
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(10), true, x => x.Josh2ACReset);
 		_observatory.EnqueueCommand(cmd);
         await cmd.WaitAsync();
         return Ok();
@@ -123,7 +125,7 @@ public class ObservatoryController : ControllerBase
 	[HttpPost("command/restart_josh2_dc")]
 	public async Task<IActionResult> RestartPier2DC()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh2DCReset);
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(10), true, x => x.Josh2DCReset);
 		_observatory.EnqueueCommand(cmd);
         await cmd.WaitAsync();
         return Ok();
@@ -132,7 +134,7 @@ public class ObservatoryController : ControllerBase
 	[HttpPost("command/restart_alex_ac")]
 	public async Task<IActionResult> RestartPier3AC()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.AlexACReset);
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(10), true, x => x.AlexACReset);
 		_observatory.EnqueueCommand(cmd);
         await cmd.WaitAsync();
         return Ok();
@@ -141,7 +143,7 @@ public class ObservatoryController : ControllerBase
 	[HttpPost("command/restart_alex_dc")]
 	public async Task<IActionResult> RestartPier3DC()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.AlexDCReset);
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(10), true, x => x.AlexDCReset);
 		_observatory.EnqueueCommand(cmd);
         await cmd.WaitAsync();
         return Ok();
@@ -150,7 +152,7 @@ public class ObservatoryController : ControllerBase
 	[HttpPost("command/restart_charlie_ac")]
 	public async Task<IActionResult> RestartPier4AC()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.CharlieACReset);
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(10), true, x => x.CharlieACReset);
 		_observatory.EnqueueCommand(cmd);
         await cmd.WaitAsync();
         return Ok();
@@ -159,7 +161,7 @@ public class ObservatoryController : ControllerBase
 	[HttpPost("command/restart_charlie_dc")]
 	public async Task<IActionResult> RestartPier4DC()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.CharlieDCReset);
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(10), true, x => x.CharlieDCReset);
 		_observatory.EnqueueCommand(cmd);
         await cmd.WaitAsync();
         return Ok();
@@ -168,7 +170,8 @@ public class ObservatoryController : ControllerBase
 	[HttpPost("command/restart_josh_10micron")]
 	public async Task<IActionResult> Restart10Micron1()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Josh10MicronReset);
+        // 10Micron requires a pulse 1 to 2 seconds in duration.
+        var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(1.5), true, x => x.Josh10MicronReset);
 		_observatory.EnqueueCommand(cmd);
 		await cmd.WaitAsync();
 		return Ok();
@@ -177,7 +180,8 @@ public class ObservatoryController : ControllerBase
 	[HttpPost("command/restart_alex_10micron")]
 	public async Task<IActionResult> Restart10Micron2()
 	{
-		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(3), true, x => x.Alex10MicronReset);
+		// 10Micron requires a pulse 1 to 2 seconds in duration.
+		var cmd = new PulsedIoCommand(TimeSpan.FromSeconds(1.5), true, x => x.Alex10MicronReset);
 		_observatory.EnqueueCommand(cmd);
         await cmd.WaitAsync();
         return Ok();

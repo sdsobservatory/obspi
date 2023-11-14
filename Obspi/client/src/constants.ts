@@ -1,5 +1,6 @@
 /* API */
 export const OBSPI_API_URL = "https://obspi.local.sdso.space/api";
+//export const OBSPI_API_URL = "http://localhost:5126/api";
 
 /* Cameras */
 export const CAMERA_NORTH_URL = "https://mediamtx.local.sdso.space/north";

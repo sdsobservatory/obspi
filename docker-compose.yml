@@ -10,3 +10,5 @@ services:
       - "8080:80"
     devices:
       - "/dev/i2c-1:/dev/i2c-1"
+    env_file:
+      - variables.env

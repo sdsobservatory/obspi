@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http.Headers;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<I2cDevicesOptions>(options =>
     builder.Configuration.GetSection(I2cDevicesOptions.I2cDevices).Bind(options));
+builder.Services.Configure<PushoverOptions>(options =>
+    builder.Configuration.GetSection(PushoverOptions.Pushover).Bind(options));
 builder.Services.Configure<SqmOptions>(builder.Configuration.GetSection("Sqm"));
 builder.Services.AddSingleton<I2cLock>();
 builder.Services.AddTransient<Func<int, int, II2cDevice>>(provider =>
@@ -39,6 +41,7 @@ builder.Services.AddSingleton<WeatherService>();
 builder.Services.AddSingleton<SqmLe>();
 builder.Services.AddSingleton<CloudWatcher>();
 builder.Services.AddSingleton<Observatory>();
+builder.Services.AddTransient<INotificationService, PushoverService>();
 
 builder.Services.AddHostedService<ObservatoryService>();
 builder.Services.AddControllers();

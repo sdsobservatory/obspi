@@ -1,5 +1,4 @@
-﻿using Obspi.Commands;
-using Obspi.Common;
+﻿using Obspi.Common;
 
 namespace Obspi;
 
