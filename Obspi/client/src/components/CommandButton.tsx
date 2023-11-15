@@ -5,6 +5,7 @@ interface CommandButtonProps {
     buttonText: string,
     color?: undefined | "primary" | "secondary" | "error" ,
     handleClick: () => Promise<void>,
+    isDisabled?: boolean,
 }
 
 function CommandButton(props: CommandButtonProps) {
@@ -30,6 +31,10 @@ function CommandButton(props: CommandButtonProps) {
             setDisabled(false);
         }
     };
+
+    React.useEffect(() => {
+        setDisabled(props.isDisabled ?? false);
+    }, [props.isDisabled])
 
     return (
         <>

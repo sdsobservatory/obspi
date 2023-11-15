@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, Stack, Typography } from "@mui/material"
+import { Card, CardContent, Grid, Stack, Typography, Alert, AlertTitle } from "@mui/material"
 import { useQuery } from "@tanstack/react-query";
 import { getObservatoryState, openRoof, closeRoof, stopRoof } from "../api/Api";
 import CommandButton from "./CommandButton";
@@ -40,10 +40,17 @@ function ObservatoryCard() {
 
                     <Grid item md={3} mt={2} sx={{ width: "100%" }}>
                         <Stack direction="row" spacing={1}>
-                            <CommandButton buttonText="Open" handleClick={() => openRoof()} />
-                            <CommandButton buttonText="Close" handleClick={() => closeRoof()} />
+                            <CommandButton buttonText="Open" handleClick={() => openRoof()} isDisabled={!observatoryState.isRoofSafeToMove} />
+                            <CommandButton buttonText="Close" handleClick={() => closeRoof()} isDisabled={!observatoryState.isRoofSafeToMove} />
                             <CommandButton buttonText="Stop" color="error" handleClick={() => stopRoof()} />
                         </Stack>
+                    </Grid>
+
+                    <Grid item mt={2} sx={{ width: "100%" }} display={observatoryState.isRoofSafeToMove ? "none" : "block"}>
+                        <Alert severity="warning" variant="outlined">
+                            <AlertTitle>Roof Not Safe To Move</AlertTitle>
+                            Check the tilt switches and verify safety with the cameras!
+                        </Alert>
                     </Grid>
 
                 </Grid>
