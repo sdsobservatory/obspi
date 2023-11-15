@@ -5,8 +5,8 @@ public interface IObspiInputs
     bool RoofOpened { get; set; }
     bool RoofClosed { get; set; }
     bool CloudWatcherUnsafe { get; set; }
-    bool TiltJosh { get; set; }
-    bool TiltAlex { get; set; }
+    bool TiltJoshSafe { get; set; }
+    bool TiltAlexSafe { get; set; }
     bool Input6 { get; set; }
     bool Input7 { get; set; }
     bool Input8 { get; set; }

@@ -13,7 +13,7 @@ function PierJosh2Card() {
             <Stack direction="row" spacing={1}>
               <CommandButton buttonText="Restart AC" handleClick={() => restartPierAc("josh2")} />
               <CommandButton buttonText="Restart DC" handleClick={() => restartPierDc("josh2")} />
-              <CommandButton buttonText="Restart Mount" handleClick={() => restart10Micron("josh")} />
+              <CommandButton buttonText="Toggle Mount" handleClick={() => restart10Micron("josh")} />
             </Stack>
           </Grid>
 

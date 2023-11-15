@@ -42,13 +42,13 @@ public class ObspiInputs : IObspiInputs
         set => _banks[0][2] = value;
     }
     
-    public bool TiltJosh
+    public bool TiltJoshSafe
     {
         get => _banks[0][3];
         set => _banks[0][3] = value;
     }
     
-    public bool TiltAlex
+    public bool TiltAlexSafe
     {
         get => _banks[0][4];
         set => _banks[0][4] = value;

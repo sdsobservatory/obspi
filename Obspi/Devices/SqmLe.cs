@@ -7,6 +7,8 @@ namespace Obspi.Devices;
 
 public record SqmOptions
 {
+    public const string Sqm = "Sqm";
+
     public required string Hostname { get; init; }
     public required int Port { get; init; }
 }

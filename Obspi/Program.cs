@@ -11,7 +11,10 @@ builder.Services.Configure<I2cDevicesOptions>(options =>
     builder.Configuration.GetSection(I2cDevicesOptions.I2cDevices).Bind(options));
 builder.Services.Configure<PushoverOptions>(options =>
     builder.Configuration.GetSection(PushoverOptions.Pushover).Bind(options));
-builder.Services.Configure<SqmOptions>(builder.Configuration.GetSection("Sqm"));
+builder.Services.Configure<WeatherOptions>(options =>
+    builder.Configuration.GetSection(WeatherOptions.Weather).Bind(options));
+builder.Services.Configure<SqmOptions>(options =>
+    builder.Configuration.GetSection(SqmOptions.Sqm).Bind(options));
 builder.Services.AddSingleton<I2cLock>();
 builder.Services.AddTransient<Func<int, int, II2cDevice>>(provider =>
 {

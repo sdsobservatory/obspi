@@ -23,8 +23,8 @@ public class ObspiInputsSnapshot : IObspiInputs
     public bool RoofOpened { get; set; }
     public bool RoofClosed { get; set; }
     public bool CloudWatcherUnsafe { get; set; }
-    public bool TiltJosh { get; set; }
-    public bool TiltAlex { get; set; }
+    public bool TiltJoshSafe { get; set; }
+    public bool TiltAlexSafe { get; set; }
     public bool Input6 { get; set; }
     public bool Input7 { get; set; }
     public bool Input8 { get; set; }

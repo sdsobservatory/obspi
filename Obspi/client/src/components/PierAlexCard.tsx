@@ -13,7 +13,7 @@ function PierAlexCard() {
             <Stack direction="row" spacing={1}>
               <CommandButton buttonText="Restart AC" handleClick={() => restartPierAc("alex")} />
               <CommandButton buttonText="Restart DC" handleClick={() => restartPierDc("alex")} />
-              <CommandButton buttonText="Restart Mount" handleClick={() => restart10Micron("alex")} />
+              <CommandButton buttonText="Toggle Mount" handleClick={() => restart10Micron("alex")} />
             </Stack>
           </Grid>
 

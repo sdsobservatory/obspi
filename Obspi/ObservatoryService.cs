@@ -65,10 +65,8 @@ public class ObservatoryService : BackgroundService
         
         var isRoofSafeToMoveConditions = new[]
         {
-            !inputs.CloudWatcherUnsafe,
-            // TODO: uncomment when tilt switches work!
-            //inputs.TiltJosh,
-            //inputs.TiltAlex,
+            inputs.TiltJoshSafe,
+            inputs.TiltAlexSafe,
         };
 
 		_observatory.IsRoofSafeToMove = isRoofSafeToMoveConditions.All(x => x);
