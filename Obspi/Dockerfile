@@ -1,10 +1,10 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 LABEL authors="Alex Helms"
 LABEL organization="SDSO"
 WORKDIR /app
 EXPOSE 80
 
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETARCH
 WORKDIR /src
 COPY . ./
@@ -12,7 +12,7 @@ RUN dotnet restore "Obspi/Obspi.csproj" -a $TARGETARCH
 WORKDIR /src/Obspi
 RUN dotnet publish "Obspi.csproj" -c Release -a $TARGETARCH --no-restore -o /app/publish
 
-FROM node:20.9.0-bookworm-slim AS client
+FROM node:20.9.0 AS client
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY "Obspi/client/" ./
