@@ -3,7 +3,7 @@ version: "3"
 services:
   obspi:
     container_name: "obspi"
-    image: "registry.local.sdso.space/obspi:latest"
+    image: "ghcr.io/sdsobservatory/obspi:main"
     restart: unless-stopped
     pull_policy: always
     ports:
