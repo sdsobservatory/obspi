@@ -2,6 +2,10 @@
 
 public interface IObspiOutputs
 {
+    bool? GetValueOrNull(string name);
+    bool TrySetValue(string name, bool state);
+    IObspiOutputs ToSnapshot();
+    List<string> Names { get; }
     bool Suicide { get; set; }
     bool RoofOpen { get; set; }
     bool RoofClose { get; set; }

@@ -13,7 +13,12 @@ public record SqmOptions
     public required int Port { get; init; }
 }
 
-public class SqmLe
+public interface ISqmLe
+{
+    Task<SqmReading> GetReadingAsync(CancellationToken token);
+}
+
+public class SqmLe : ISqmLe
 {
     private readonly IOptions<SqmOptions> _options;
     private const int ReadingLength = 57;

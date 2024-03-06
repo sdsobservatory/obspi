@@ -3,10 +3,23 @@ using Obspi.Devices.I2c;
 
 namespace Obspi.Devices;
 
-public class IndustrialAutomation
+public interface IIndustrialAutomation
+{
+    double Get24VRailVoltage();
+    double Get5VRailVoltage();
+    double GetAnalogOut(IndustrialAutomation.AnalogChannel channel);
+    int GetCpuTemperature();
+    DateTime GetDateTime();
+    Version GetFirmwareVersion();
+    double GetRtcBatteryVoltage();
+    void SetAnalogOut(IndustrialAutomation.AnalogChannel channel, double value);
+    void SetDateTime(DateTime datetime);
+}
+
+public class IndustrialAutomation : IIndustrialAutomation
 {
     private readonly II2cDevice _device;
-    
+
     public static byte CalibrationKey => 0xaa;
 
     private enum Register : byte
@@ -45,64 +58,64 @@ public class IndustrialAutomation
     public static void LoadDefaultValues(InMemoryI2cDevice i2c)
     {
         Span<byte> buffer = stackalloc byte[2];
-        
-        i2c.Data[(int) Register.DiagnosticsCpuTemperature] = 25;
-        i2c.Data[(int) Register.FirmwareMajor] = 1;
-        i2c.Data[(int) Register.FirmwareMinor] = 12;
+
+        i2c.Data[(int)Register.DiagnosticsCpuTemperature] = 25;
+        i2c.Data[(int)Register.FirmwareMajor] = 1;
+        i2c.Data[(int)Register.FirmwareMinor] = 12;
 
         var now = DateTime.UtcNow;
-        i2c.Data[(int) Register.GetRtc] = (byte) (now.Year - 2000);
-        i2c.Data[(int) Register.GetRtc + 1] = (byte) now.Month;
-        i2c.Data[(int) Register.GetRtc + 2] = (byte) now.Day;
-        i2c.Data[(int) Register.GetRtc + 3] = (byte) now.Hour;
-        i2c.Data[(int) Register.GetRtc + 4] = (byte) now.Minute;
-        i2c.Data[(int) Register.GetRtc + 5] = (byte) now.Second;
+        i2c.Data[(int)Register.GetRtc] = (byte)(now.Year - 2000);
+        i2c.Data[(int)Register.GetRtc + 1] = (byte)now.Month;
+        i2c.Data[(int)Register.GetRtc + 2] = (byte)now.Day;
+        i2c.Data[(int)Register.GetRtc + 3] = (byte)now.Hour;
+        i2c.Data[(int)Register.GetRtc + 4] = (byte)now.Minute;
+        i2c.Data[(int)Register.GetRtc + 5] = (byte)now.Second;
 
         BinaryPrimitives.WriteInt16LittleEndian(buffer, 24052);
-        i2c.Data[(int) Register.Diagnostics24VRail] = buffer[0];
-        i2c.Data[(int) Register.Diagnostics24VRail + 1] = buffer[1];
-        
+        i2c.Data[(int)Register.Diagnostics24VRail] = buffer[0];
+        i2c.Data[(int)Register.Diagnostics24VRail + 1] = buffer[1];
+
         BinaryPrimitives.WriteInt16LittleEndian(buffer, 5031);
-        i2c.Data[(int) Register.Diagnostics5VRail] = buffer[0];
-        i2c.Data[(int) Register.Diagnostics5VRail + 1] = buffer[1];
-        
+        i2c.Data[(int)Register.Diagnostics5VRail] = buffer[0];
+        i2c.Data[(int)Register.Diagnostics5VRail + 1] = buffer[1];
+
         BinaryPrimitives.WriteInt16LittleEndian(buffer, 3314);
-        i2c.Data[(int) Register.BatteryVoltage] = buffer[0];
-        i2c.Data[(int) Register.BatteryVoltage + 1] = buffer[1];
+        i2c.Data[(int)Register.BatteryVoltage] = buffer[0];
+        i2c.Data[(int)Register.BatteryVoltage + 1] = buffer[1];
     }
 
     public int GetCpuTemperature()
     {
         Span<byte> readBuffer = stackalloc byte[1];
         Span<byte> writeBuffer = stackalloc byte[1];
-        writeBuffer[0] = (byte) Register.DiagnosticsCpuTemperature;
+        writeBuffer[0] = (byte)Register.DiagnosticsCpuTemperature;
         _device.WriteRead(writeBuffer, readBuffer);
         return readBuffer[0];
     }
-    
+
     public double Get24VRailVoltage()
     {
         Span<byte> readBuffer = stackalloc byte[2];
         Span<byte> writeBuffer = stackalloc byte[1];
-        writeBuffer[0] = (byte) Register.Diagnostics24VRail;
+        writeBuffer[0] = (byte)Register.Diagnostics24VRail;
         _device.WriteRead(writeBuffer, readBuffer);
         return BinaryPrimitives.ReadInt16LittleEndian(readBuffer) / 1000.0;
     }
-    
+
     public double Get5VRailVoltage()
     {
         Span<byte> readBuffer = stackalloc byte[2];
         Span<byte> writeBuffer = stackalloc byte[1];
-        writeBuffer[0] = (byte) Register.Diagnostics5VRail;
+        writeBuffer[0] = (byte)Register.Diagnostics5VRail;
         _device.WriteRead(writeBuffer, readBuffer);
         return BinaryPrimitives.ReadInt16LittleEndian(readBuffer) / 1000.0;
     }
-    
+
     public double GetRtcBatteryVoltage()
     {
         Span<byte> readBuffer = stackalloc byte[2];
         Span<byte> writeBuffer = stackalloc byte[1];
-        writeBuffer[0] = (byte) Register.BatteryVoltage;
+        writeBuffer[0] = (byte)Register.BatteryVoltage;
         _device.WriteRead(writeBuffer, readBuffer);
         return BinaryPrimitives.ReadInt16LittleEndian(readBuffer) / 1000.0;
     }
@@ -111,24 +124,24 @@ public class IndustrialAutomation
     {
         Span<byte> readBuffer = stackalloc byte[1];
         Span<byte> writeBuffer = stackalloc byte[1];
-        
-        writeBuffer[0] = (byte) Register.FirmwareMajor;
+
+        writeBuffer[0] = (byte)Register.FirmwareMajor;
         _device.WriteRead(writeBuffer, readBuffer);
         int major = readBuffer[0];
-        
-        writeBuffer[0] = (byte) Register.FirmwareMinor;
+
+        writeBuffer[0] = (byte)Register.FirmwareMinor;
         _device.WriteRead(writeBuffer, readBuffer);
         int minor = readBuffer[0];
 
         return new(major, minor);
     }
-    
+
     public DateTime GetDateTime()
     {
         Span<byte> readBuffer = stackalloc byte[6];
         Span<byte> writeBuffer = stackalloc byte[1];
-        
-        writeBuffer[0] = (byte) Register.GetRtc;
+
+        writeBuffer[0] = (byte)Register.GetRtc;
         _device.WriteRead(writeBuffer, readBuffer);
 
         var year = 2000 + readBuffer[0];

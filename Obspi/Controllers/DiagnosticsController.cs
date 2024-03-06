@@ -7,9 +7,9 @@ namespace Obspi.Controllers;
 [Route("api/diagnostics")]
 public class DiagnosticsController : ControllerBase
 {
-    private readonly Observatory _observatory;
+    private readonly IObservatory _observatory;
 
-    public DiagnosticsController(Observatory observatory)
+    public DiagnosticsController(IObservatory observatory)
     {
         _observatory = observatory;
     }

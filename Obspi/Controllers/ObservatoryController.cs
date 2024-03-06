@@ -10,11 +10,11 @@ namespace Obspi.Controllers;
 [Route("api/observatory")]
 public class ObservatoryController : ControllerBase
 {
-    private readonly Observatory _observatory;
+    private readonly IObservatory _observatory;
 	private readonly WeatherService _weather;
     private readonly INotificationService _notificationService;
 
-    public ObservatoryController(Observatory observatory, WeatherService weather, INotificationService notificationService)
+    public ObservatoryController(IObservatory observatory, WeatherService weather, INotificationService notificationService)
     {
         _observatory = observatory;
 		_weather = weather;

@@ -16,7 +16,7 @@ public class PulsedIoCommand : Command
         Selector = selector;
     }
 
-    protected override async Task Execute(Observatory observatory, CancellationToken token)
+    protected override async Task Execute(IObservatory observatory, CancellationToken token)
     {
         var prop = Selector.GetPropertyInfo();
         prop.SetValue(observatory.IO.Outputs, Value);

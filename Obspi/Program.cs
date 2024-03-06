@@ -24,7 +24,7 @@ builder.Services.AddTransient<Func<int, int, II2cDevice>>(provider =>
         return (bus, addr) => new InMemoryI2cDevice(bus, addr, i2cLock);
     return (bus, addr) => new ThreadSafeI2cDevice(bus, addr, i2cLock);
 });
-builder.Services.AddSingleton<ObspiIO>(provider =>
+builder.Services.AddSingleton<IObspiIO, ObspiIO>(provider =>
 {
     var options = provider.GetRequiredService<IOptions<I2cDevicesOptions>>();
     var i2cFunc = provider.GetRequiredService<Func<int, int, II2cDevice>>();
@@ -34,16 +34,17 @@ builder.Services.AddSingleton<ObspiIO>(provider =>
         .Select(addr => new OutputBank16(i2cFunc(1, addr))));
     return new(inputs, outputs);
 });
-builder.Services.AddSingleton<IndustrialAutomation>(provider =>
+builder.Services.AddSingleton<IIndustrialAutomation, IndustrialAutomation>(provider =>
 {
     var options = provider.GetRequiredService<IOptions<I2cDevicesOptions>>();
     var i2cFunc = provider.GetRequiredService<Func<int, int, II2cDevice>>();
     return new(i2cFunc(1, options.Value.Watchdog));
 });
+builder.Services.AddSingleton<ISqmLe, SqmLe>();
+builder.Services.AddSingleton<ICloudWatcher, CloudWatcher>();
+builder.Services.AddSingleton<IObservatory, Observatory>();
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 builder.Services.AddSingleton<WeatherService>();
-builder.Services.AddSingleton<SqmLe>();
-builder.Services.AddSingleton<CloudWatcher>();
-builder.Services.AddSingleton<Observatory>();
 builder.Services.AddTransient<INotificationService, PushoverService>();
 
 builder.Services.AddHostedService<ObservatoryService>();

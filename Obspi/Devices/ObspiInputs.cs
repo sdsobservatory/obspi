@@ -1,6 +1,6 @@
 ﻿namespace Obspi.Devices;
 
-public class ObspiInputs : IObspiInputs
+public record ObspiInputs : IObspiInputs
 {
     private readonly IList<InputBank16> _banks;
 
@@ -14,13 +14,13 @@ public class ObspiInputs : IObspiInputs
             .ToList();
     }
 
+    public IObspiInputs ToSnapshot() => new ObspiInputsSnapshot(this);
+
     public bool? GetValueOrNull(string name)
     {
         var prop = GetType().GetProperty(name);
         return prop?.GetValue(this) as bool?;
     }
-
-    public IObspiInputs ToSnapshot() => new ObspiInputsSnapshot(this);
 
     public List<string> Names { get; }
 

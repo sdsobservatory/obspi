@@ -11,12 +11,12 @@ public class IoController : ControllerBase
 {
     private readonly ILogger<IoController> _logger;
 	private readonly IOptions<I2cDevicesOptions> _i2cOptions;
-    private readonly Observatory _observatory;
+    private readonly IObservatory _observatory;
 
     public IoController(
         ILogger<IoController> logger,
         IOptions<I2cDevicesOptions> i2cOptions,
-        Observatory observatory)
+        IObservatory observatory)
     {
 		_logger = logger;
 		_i2cOptions = i2cOptions;

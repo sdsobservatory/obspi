@@ -2,6 +2,9 @@
 
 public interface IObspiInputs
 {
+    bool? GetValueOrNull(string name);
+    IObspiInputs ToSnapshot();
+    List<string> Names { get; }
     bool RoofOpened { get; set; }
     bool RoofClosed { get; set; }
     bool CloudWatcherUnsafe { get; set; }

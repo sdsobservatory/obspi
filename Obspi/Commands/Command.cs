@@ -11,9 +11,9 @@ public abstract class Command
 
     public CommandState State { get; private set; } = CommandState.Created;
 
-    protected abstract Task Execute(Observatory observatory, CancellationToken token);
+    protected abstract Task Execute(IObservatory observatory, CancellationToken token);
 
-    public async Task Run(Observatory observatory, CancellationToken token)
+    public async Task Run(IObservatory observatory, CancellationToken token)
     {
         try
         {
@@ -30,6 +30,8 @@ public abstract class Command
             _completeEvent.Set();
         }
     }
+
+    internal void SetComplete() => _completeEvent.Set();
 
     public void Wait(CancellationToken token = default) => _completeEvent.Wait(token);
 

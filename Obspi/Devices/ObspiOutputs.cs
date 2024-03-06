@@ -1,6 +1,6 @@
 ﻿namespace Obspi.Devices;
 
-public class ObspiOutputs : IObspiOutputs
+public record ObspiOutputs : IObspiOutputs
 {
     private readonly IList<OutputBank16> _banks;
 
@@ -13,6 +13,8 @@ public class ObspiOutputs : IObspiOutputs
             .Select(p => p.Name)
             .ToList();
     }
+
+    public IObspiOutputs ToSnapshot() => new ObspiOutputsSnapshot(this);
     
     public bool? GetValueOrNull(string name)
     {
@@ -30,8 +32,6 @@ public class ObspiOutputs : IObspiOutputs
         return true;
     }
 
-    public IObspiOutputs ToSnapshot() => new ObspiOutputsSnapshot(this);
-    
     public List<string> Names { get; }
 
     public bool Suicide

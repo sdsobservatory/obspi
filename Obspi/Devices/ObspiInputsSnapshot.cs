@@ -1,24 +1,43 @@
-﻿namespace Obspi.Devices;
+﻿
+using System.Reflection;
+
+namespace Obspi.Devices;
 
 public class ObspiInputsSnapshot : IObspiInputs
 {
+    private readonly Dictionary<string, PropertyInfo?> _thisProps;
+
     public ObspiInputsSnapshot(IObspiInputs inputs)
     {
         var otherProps = inputs
             .GetType()
             .GetProperties()
             .Where(p => p.PropertyType == typeof(bool));
-        
-        var thisProps = GetType()
+
+        _thisProps = GetType()
             .GetProperties()
             .Where(p => p.PropertyType == typeof(bool))
-            .ToDictionary(x => x.Name, x => x);
+            .ToDictionary(x => x.Name, x => x)!;
 
         foreach (var otherProp in otherProps)
         {
-            thisProps[otherProp.Name].SetValue(this, otherProp.GetValue(inputs));
+            _thisProps[otherProp.Name]!.SetValue(this, otherProp.GetValue(inputs));
         }
     }
+
+    public List<string> Names => throw new NotImplementedException();
+
+    public bool? GetValueOrNull(string name)
+    {
+        if (_thisProps.TryGetValue(name, out var value))
+        {
+            return value!.GetValue(this) as bool?;
+        }
+
+        return null;
+    }
+
+    public IObspiInputs ToSnapshot() => this;
 
     public bool RoofOpened { get; set; }
     public bool RoofClosed { get; set; }

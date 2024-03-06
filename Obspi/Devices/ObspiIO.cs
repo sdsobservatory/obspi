@@ -1,13 +1,19 @@
 ﻿namespace Obspi.Devices;
 
-public class ObspiIO
+public interface IObspiIO
+{
+    IObspiInputs Inputs { get; }
+    IObspiOutputs Outputs { get; }
+}
+
+public class ObspiIO : IObspiIO
 {
     public ObspiIO(IList<InputBank16> inputs, IList<OutputBank16> outputs)
     {
-        Inputs = new(inputs);
-        Outputs = new(outputs);
+        Inputs = new ObspiInputs(inputs);
+        Outputs = new ObspiOutputs(outputs);
     }
     
-    public ObspiInputs Inputs { get; }
-    public ObspiOutputs Outputs { get; }
+    public IObspiInputs Inputs { get; }
+    public IObspiOutputs Outputs { get; }
 }

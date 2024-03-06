@@ -6,13 +6,13 @@ public abstract class OpenCloseRoofCommand : Command
 {
     private readonly INotificationService _notificationService;
 
-    public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(10);
+    public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(60);
 
     public Action OnTimeout { get; init; } = () => { };
 
-    public abstract Action<Observatory, bool> SetOutput { get; }
+    public abstract Action<IObservatory, bool> SetOutput { get; }
 
-    public abstract Func<Observatory, bool> GetInput { get; }
+    public abstract Func<IObservatory, bool> GetInput { get; }
 
     public abstract string Description { get; }
 
@@ -29,7 +29,7 @@ public abstract class OpenCloseRoofCommand : Command
         _notificationService = notificationService;
     }
 
-    protected override async Task Execute(Observatory observatory, CancellationToken token)
+    protected override async Task Execute(IObservatory observatory, CancellationToken token)
     {
         if (!observatory.IsRoofSafeToMove)
             throw new InvalidOperationException("Not safe to move roof");
@@ -100,8 +100,8 @@ public abstract class OpenCloseRoofCommand : Command
 
 public class OpenRoofCommand : OpenCloseRoofCommand
 {
-    public override Action<Observatory, bool> SetOutput { get; } = (obs, value) => obs.IO.Outputs.RoofOpen = value;
-    public override Func<Observatory, bool> GetInput { get; } = obs => obs.IO.Inputs.RoofOpened;
+    public override Action<IObservatory, bool> SetOutput { get; } = (obs, value) => obs.IO.Outputs.RoofOpen = value;
+    public override Func<IObservatory, bool> GetInput { get; } = obs => obs.IO.Inputs.RoofOpened;
     public override string Description => "Open";
     public override string Verb => "Opening";
     public override string SuccessMessage => "Roof is now open.";
@@ -116,8 +116,8 @@ public class OpenRoofCommand : OpenCloseRoofCommand
 
 public class CloseRoofCommand : OpenCloseRoofCommand
 {
-    public override Action<Observatory, bool> SetOutput { get; } = (obs, value) => obs.IO.Outputs.RoofClose = value;
-    public override Func<Observatory, bool> GetInput { get; } = obs => obs.IO.Inputs.RoofClosed;
+    public override Action<IObservatory, bool> SetOutput { get; } = (obs, value) => obs.IO.Outputs.RoofClose = value;
+    public override Func<IObservatory, bool> GetInput { get; } = obs => obs.IO.Inputs.RoofClosed;
     public override string Description => "Closed";
     public override string Verb => "Closing";
     public override string SuccessMessage => "Roof is now closed.";

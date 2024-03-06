@@ -60,7 +60,12 @@ public record AagCloudWatcherData
     public double RawIR { get; set; }
 }
 
-public class CloudWatcher
+public interface ICloudWatcher
+{
+    AagCloudWatcherData MostRecentData { get; set; }
+}
+
+public class CloudWatcher : ICloudWatcher
 {
     public AagCloudWatcherData MostRecentData { get; set; } = new();
 
