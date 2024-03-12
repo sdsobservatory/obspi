@@ -200,7 +200,6 @@ public class ObservatoryController : ControllerBase
 		{
 			IsEnabled = _autoRoofService.IsEnabled,
 			Period = _autoRoofService.Period.TotalSeconds,
-            TriggerTime = _autoRoofService.TriggerTime.ToString(),
         });
     }
 
@@ -208,19 +207,8 @@ public class ObservatoryController : ControllerBase
 	public IActionResult SetAutoRoofClose(bool value)
 	{
 		_autoRoofService.IsEnabled = value;
-		return Ok();
+		return RedirectToAction(nameof(SetAutoRoofClose));
 	}
-
-    [HttpPost("command/set_auto_roof_close_time")]
-    public IActionResult SetAutoRoofClose(string time)
-    {
-		if (TimeOnly.TryParse(time, out var triggerTime))
-		{
-			_autoRoofService.TriggerTime = triggerTime;
-		}
-
-        return Ok();
-    }
 
     #endregion
 
