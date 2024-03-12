@@ -75,7 +75,7 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
             sunrise = TriggerTime;
         }
 
-        var currentTime = TimeOnly.FromDateTime(now.LocalDateTime);
+        var currentTime = TimeOnly.FromTimeSpan(now.TimeOfDay);
         var normalAlertTime = sunrise.AddMinutes(MinutesPastSunriseNormalPriorityAlert);
         var emergencyAlertTime = sunrise.AddMinutes(MinutesPastSunriseEmergencyPriorityAlert);
 
