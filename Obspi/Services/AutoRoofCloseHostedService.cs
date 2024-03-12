@@ -66,7 +66,7 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
             return;
         }
 
-        var now = _timeProvider.GetLocalNow();
+        var now = _timeProvider.GetLocalNow().LocalDateTime;
         var sunrise = SunRiseTable[now.Month];
 
         // TODO: remove, only for on-site testing
