@@ -57,9 +57,12 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
         var observatory = scope.ServiceProvider.GetRequiredService<IObservatory>();
         var notification = scope.ServiceProvider.GetRequiredService<INotificationService>();
 
+        _logger.LogInformation("Checking if the roof should be automatically closed");
+
         // Ignore if the roof is already closed
         if (observatory.IsRoofClosed)
         {
+            _logger.LogInformation("Roof already closed, nothing to do");
             return;
         }
 
@@ -74,14 +77,17 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
 
         var currentTime = TimeOnly.FromDateTime(now.LocalDateTime);
         var normalAlertTime = sunrise.AddMinutes(MinutesPastSunriseNormalPriorityAlert);
-        var highAlertTime = sunrise.AddMinutes(MinutesPastSunriseEmergencyPriorityAlert);
+        var emergencyAlertTime = sunrise.AddMinutes(MinutesPastSunriseEmergencyPriorityAlert);
+
+        _logger.LogInformation("Current Time: {CurrentTime}, Sunrise Time: {SunriseTime}, Normal Alert Time: {NormalAlertTime}, Critical Alert Time: {CriticalAlertTime}",
+            currentTime, sunrise, normalAlertTime, emergencyAlertTime);
 
         // Is it time to start caring about closing the roof?
         if (currentTime >= sunrise && currentTime < new TimeOnly(12, 00))
         {
             _logger.LogInformation("The sun is coming up, time to close the roof");
 
-            if (currentTime >= highAlertTime &&
+            if (currentTime >= emergencyAlertTime &&
                 currentTime.Minute % AlertInterval == 0)
             {
                 _logger.LogInformation($"The roof has not been closed, sending emergency priority alerts");
@@ -126,6 +132,10 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
             {
                 _logger.LogInformation($"The roof did not close, trying again in {Period.TotalMinutes:F0} minutes");
             }
+        }
+        else
+        {
+            _logger.LogInformation("Roof does not need to be closed");
         }
     }
 }

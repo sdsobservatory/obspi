@@ -200,7 +200,8 @@ public class ObservatoryController : ControllerBase
 		{
 			IsEnabled = _autoRoofService.IsEnabled,
 			Period = _autoRoofService.Period.TotalSeconds,
-		});
+            TriggerTime = _autoRoofService.TriggerTime.ToString(),
+        });
     }
 
     [HttpPost("command/auto_roof_close")]
