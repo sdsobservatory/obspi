@@ -7,9 +7,9 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
     private readonly ILogger<AutoRoofCloseHostedService> _logger;
     private readonly TimeProvider _timeProvider;
 
-    private const int MinutesPastSunriseNormalPriorityAlert = 30;
-    private const int MinutesPastSunriseEmergencyPriorityAlert = 90;
-    private const int AlertInterval = 5;  // every 5 minutes
+    private const int MinutesPastSunriseNormalPriorityAlert = 3;
+    private const int MinutesPastSunriseEmergencyPriorityAlert = 6;
+    private const int AlertInterval = 1;  // every 5 minutes
 
     /// <summary>
     /// The time when the sun is approx. 3 deg above horizon.
