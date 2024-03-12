@@ -83,7 +83,7 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
             currentTime, sunrise, normalAlertTime, emergencyAlertTime);
 
         // Is it time to start caring about closing the roof?
-        if (currentTime >= sunrise && currentTime < new TimeOnly(12, 00))
+        if (currentTime >= sunrise)// && currentTime < new TimeOnly(12, 00))
         {
             _logger.LogInformation("The sun is coming up, time to close the roof");
 
