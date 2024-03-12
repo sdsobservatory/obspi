@@ -37,7 +37,7 @@ public abstract class PeriodicHostedService : BackgroundService
         }
     }
 
-    public bool IsEnabled { get; set; }
+    public bool IsEnabled { get; set; } = true;
 
     public TimeSpan Period { get; set; } = TimeSpan.FromMinutes(1);
 

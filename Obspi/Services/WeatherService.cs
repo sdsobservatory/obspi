@@ -10,9 +10,9 @@ namespace Obspi.Services;
 public class WeatherService
 {
     private readonly WeatherOptions _options;
-    private readonly SqmLe _sqm;
+    private readonly ISqmLe _sqm;
 
-    public WeatherService(IOptions<WeatherOptions> options, SqmLe sqm)
+    public WeatherService(IOptions<WeatherOptions> options, ISqmLe sqm)
     {
         _options = options.Value;
         _sqm = sqm;

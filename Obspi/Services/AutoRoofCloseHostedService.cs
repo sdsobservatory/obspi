@@ -32,6 +32,9 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
 #pragma warning restore format
     };
 
+    // TODO: REMOVE, this is for on-site testing
+    public TimeOnly TriggerTime { get; set; } = TimeOnly.MinValue;
+
     public AutoRoofCloseHostedService(
         ILogger<AutoRoofCloseHostedService> logger,
         IServiceScopeFactory factory,
@@ -40,6 +43,8 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
     {
         _logger = logger;
         _timeProvider = timeProvider;
+
+        TriggerTime = SunRiseTable[DateTime.Now.Month];
 
         // 1 minute if plenty fast enough.
         Period = TimeSpan.FromMinutes(1);
@@ -60,6 +65,13 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
 
         var now = _timeProvider.GetLocalNow();
         var sunrise = SunRiseTable[now.Month];
+
+        // TODO: remove, only for on-site testing
+        if (TriggerTime != TimeOnly.MinValue)
+        {
+            sunrise = TriggerTime;
+        }
+
         var currentTime = TimeOnly.FromDateTime(now.LocalDateTime);
         var normalAlertTime = sunrise.AddMinutes(MinutesPastSunriseNormalPriorityAlert);
         var highAlertTime = sunrise.AddMinutes(MinutesPastSunriseEmergencyPriorityAlert);
@@ -73,10 +85,10 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
                 currentTime.Minute % AlertInterval == 0)
             {
                 _logger.LogInformation($"The roof has not been closed, sending emergency priority alerts");
-                await notification.SendMessageAsync(
-                    title: "Auto Roof Close Failed",
-                    message: "Roof did not auto close, check roof now!",
-                    priority: MessagePriority.Emergency);
+                //await notification.SendMessageAsync(
+                //    title: "Auto Roof Close Failed",
+                //    message: "Roof did not auto close, check roof now!",
+                //    priority: MessagePriority.Emergency);
                 
                 // Do not attempt to close the roof since all previous attempts failed.
                 return;
@@ -85,10 +97,10 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
                 currentTime.Minute % AlertInterval == 0)
             {
                 _logger.LogInformation($"The roof has not been closed, sending normal priority alerts");
-                await notification.SendMessageAsync(
-                    title: "Auto Roof Close Failed",
-                    message: "Roof did not auto close, check roof now!",
-                    priority: MessagePriority.Normal);
+                //await notification.SendMessageAsync(
+                //    title: "Auto Roof Close Failed",
+                //    message: "Roof did not auto close, check roof now!",
+                //    priority: MessagePriority.Normal);
 
                 // Do not attempt to close the roof since all previous attempts failed.
                 return;

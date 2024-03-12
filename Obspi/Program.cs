@@ -46,7 +46,9 @@ builder.Services.AddSingleton<IObservatory, Observatory>();
 builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 builder.Services.AddSingleton<WeatherService>();
 builder.Services.AddTransient<INotificationService, PushoverService>();
+builder.Services.AddSingleton<AutoRoofCloseHostedService>();
 
+builder.Services.AddHostedService(s => s.GetRequiredService<AutoRoofCloseHostedService>());
 builder.Services.AddHostedService<ObservatoryService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

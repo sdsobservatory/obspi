@@ -13,12 +13,18 @@ public class ObservatoryController : ControllerBase
     private readonly IObservatory _observatory;
 	private readonly WeatherService _weather;
     private readonly INotificationService _notificationService;
+	private readonly AutoRoofCloseHostedService _autoRoofService;
 
-    public ObservatoryController(IObservatory observatory, WeatherService weather, INotificationService notificationService)
+    public ObservatoryController(
+		IObservatory observatory,
+		WeatherService weather,
+		INotificationService notificationService,
+        AutoRoofCloseHostedService autoRoofService)
     {
         _observatory = observatory;
 		_weather = weather;
         _notificationService = notificationService;
+		_autoRoofService = autoRoofService;
     }
 
     [HttpGet]
@@ -187,11 +193,39 @@ public class ObservatoryController : ControllerBase
         return Ok();
     }
 
-	#endregion
+    [HttpGet("command/auto_roof_close")]
+    public IActionResult SetAutoRoofClose()
+    {
+        return Ok(new
+		{
+			IsEnabled = _autoRoofService.IsEnabled,
+			Period = _autoRoofService.Period.TotalSeconds,
+		});
+    }
 
-	#region Weather
+    [HttpPost("command/auto_roof_close")]
+	public IActionResult SetAutoRoofClose(bool value)
+	{
+		_autoRoofService.IsEnabled = value;
+		return Ok();
+	}
 
-	[HttpGet("weather")]
+    [HttpPost("command/set_auto_roof_close_time")]
+    public IActionResult SetAutoRoofClose(string time)
+    {
+		if (TimeOnly.TryParse(time, out var triggerTime))
+		{
+			_autoRoofService.TriggerTime = triggerTime;
+		}
+
+        return Ok();
+    }
+
+    #endregion
+
+    #region Weather
+
+    [HttpGet("weather")]
 	public async Task<IActionResult> GetWeather(CancellationToken token)
 	{
 		var report = await _weather.GetWeatherAsync(token);

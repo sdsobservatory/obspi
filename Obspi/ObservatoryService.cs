@@ -5,13 +5,13 @@ namespace Obspi;
 public class ObservatoryService : BackgroundService
 {
     private readonly ILogger<ObservatoryService> _logger;
-    private readonly Observatory _observatory;
+    private readonly IObservatory _observatory;
 
     public TimeSpan Interval => TimeSpan.FromMilliseconds(500);
 
     public ObservatoryService(
         ILogger<ObservatoryService> logger,
-        Observatory observatory)
+        IObservatory observatory)
     {
         _logger = logger;
         _observatory = observatory;
