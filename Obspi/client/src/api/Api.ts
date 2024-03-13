@@ -93,3 +93,21 @@ export const stopRoof = async (): Promise<void> => {
             timeout: 3000,
         });
 };
+
+export const enableAutoRoofClose = async (): Promise<void> => {
+    await apiClient.post(
+        "/observatory/enable_auto_roof_close",
+        null,
+        {
+            timeout: 3000,
+        });
+};
+
+export const disableAutoRoofClose = async (): Promise<void> => {
+    await apiClient.post(
+        "/observatory/disable_auto_roof_close",
+        null,
+        {
+            timeout: 3000,
+        });
+};

@@ -13,6 +13,10 @@ export interface IObservatoryState {
     isRoofSafeToMove: boolean,
     isRoofOpen: boolean,
     isRoofClosed: boolean,
+    isAutoRoofEnabled: boolean,
+    sunriseTime: string,
+    sunriseNormalAlertTime: string,
+    sunriseEmergencyAlertTime: string,
 }
 
 export interface IWeatherSnapshot {

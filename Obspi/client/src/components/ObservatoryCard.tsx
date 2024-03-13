@@ -1,6 +1,6 @@
-import { Card, CardContent, Grid, Stack, Typography, Alert, AlertTitle } from "@mui/material"
+import { Card, CardContent, Grid, Stack, Typography, Alert, AlertTitle, Switch } from "@mui/material"
 import { useQuery } from "@tanstack/react-query";
-import { getObservatoryState, openRoof, closeRoof, stopRoof } from "../api/Api";
+import { getObservatoryState, openRoof, closeRoof, stopRoof, enableAutoRoofClose, disableAutoRoofClose } from "../api/Api";
 import CommandButton from "./CommandButton";
 import DigitalIoIndicator from "./DigitalIoIndicator";
 
@@ -54,6 +54,34 @@ function ObservatoryCard() {
                     </Grid>
 
                 </Grid>
+
+                <Typography variant="h6" mt={2}>Auto Close</Typography>
+                <Switch checked={observatoryState.isAutoRoofEnabled}
+                        onChange={(event) => event.target.checked ? enableAutoRoofClose() : disableAutoRoofClose()} /> 
+
+                <Stack direction={{ sm: 'column', md: 'row' }}
+                    flexWrap="wrap"
+                    useFlexGap
+                    spacing={2}
+                    style={{ textAlign: "center" }}>
+
+                    <Stack>
+                        <Typography variant="h6">Roof Close</Typography>
+                        <Typography>{observatoryState.sunriseTime ?? "??:??"}</Typography>
+                    </Stack>
+
+                    <Stack>
+                        <Typography variant="h6">Alert</Typography>
+                        <Typography>{observatoryState.sunriseNormalAlertTime ?? "??:??"}</Typography>
+                    </Stack>
+
+                    <Stack>
+                        <Typography variant="h6">Emergency</Typography>
+                        <Typography>{observatoryState.sunriseEmergencyAlertTime ?? "??:??"}</Typography>
+                    </Stack>
+
+                </Stack>
+                               
             </CardContent>
         </Card>
     )

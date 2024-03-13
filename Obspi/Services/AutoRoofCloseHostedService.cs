@@ -52,28 +52,23 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
         var observatory = scope.ServiceProvider.GetRequiredService<IObservatory>();
         var notification = scope.ServiceProvider.GetRequiredService<INotificationService>();
 
+        _logger.LogInformation("Current Time: {CurrentTime}, Sunrise Time: {SunriseTime}, Normal Alert Time: {NormalAlertTime}, Critical Alert Time: {CriticalAlertTime}",
+            CurrentTime, Sunrise, NormalAlertTime, EmergencyAlertTime);
+
         // Ignore if the roof is already closed
         if (observatory.IsRoofClosed)
         {
+            _logger.LogInformation("Roof already closed");
             return;
         }
 
-        var now = _timeProvider.GetLocalNow();
-        var sunrise = SunRiseTable[now.Month];
-        var currentTime = TimeOnly.FromTimeSpan(now.TimeOfDay);
-        var normalAlertTime = sunrise.AddMinutes(MinutesPastSunriseNormalPriorityAlert);
-        var emergencyAlertTime = sunrise.AddMinutes(MinutesPastSunriseEmergencyPriorityAlert);
-
-        _logger.LogInformation("Current Time: {CurrentTime}, Sunrise Time: {SunriseTime}, Normal Alert Time: {NormalAlertTime}, Critical Alert Time: {CriticalAlertTime}",
-            currentTime, sunrise, normalAlertTime, emergencyAlertTime);
-
         // Is it time to start caring about closing the roof?
-        if (currentTime >= sunrise && currentTime < new TimeOnly(12, 00))
+        if (CurrentTime < new TimeOnly(12, 00) && CurrentTime >= Sunrise)
         {
             _logger.LogInformation("The sun is coming up, time to close the roof");
 
-            if (currentTime >= emergencyAlertTime &&
-                currentTime.Minute % AlertInterval == 0)
+            if (CurrentTime >= EmergencyAlertTime &&
+                CurrentTime.Minute % AlertInterval == 0)
             {
                 _logger.LogInformation($"The roof has not been closed, sending emergency priority alerts");
                 await notification.SendMessageAsync(
@@ -84,8 +79,8 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
                 // Do not attempt to close the roof since all previous attempts failed.
                 return;
             }
-            else if (currentTime >= normalAlertTime &&
-                currentTime.Minute % AlertInterval == 0)
+            else if (CurrentTime >= NormalAlertTime &&
+                CurrentTime.Minute % AlertInterval == 0)
             {
                 _logger.LogInformation($"The roof has not been closed, sending normal priority alerts");
                 await notification.SendMessageAsync(
@@ -120,7 +115,17 @@ public class AutoRoofCloseHostedService : PeriodicHostedService
         }
         else
         {
-            _logger.LogInformation("Roof does not need to be closed");
+            _logger.LogInformation("Not yet time to close the roof");
         }
     }
+
+    public DateTime Now => _timeProvider.GetLocalNow().LocalDateTime;
+
+    public TimeOnly CurrentTime => TimeOnly.FromDateTime(Now);
+
+    public TimeOnly Sunrise => SunRiseTable[Now.Month];
+
+    public TimeOnly NormalAlertTime => Sunrise.AddMinutes(MinutesPastSunriseNormalPriorityAlert);
+
+    public TimeOnly EmergencyAlertTime => Sunrise.AddMinutes(MinutesPastSunriseEmergencyPriorityAlert);
 }

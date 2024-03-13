@@ -35,6 +35,10 @@ public class ObservatoryController : ControllerBase
 			IsRoofSafeToMove = _observatory.IsRoofSafeToMove,
 			IsRoofOpen = _observatory.IsRoofOpen,
             IsRoofClosed = _observatory.IsRoofClosed,
+			IsAutoRoofEnabled = _autoRoofService.IsEnabled,
+			SunriseTime = _autoRoofService.Sunrise.ToString("HH:mm"),
+			SunriseNormalAlertTime = _autoRoofService.NormalAlertTime.ToString("HH:mm"),
+			SunriseEmergencyAlertTime = _autoRoofService.EmergencyAlertTime.ToString("HH:mm"),
         };
 
         return Ok(dto);
@@ -193,22 +197,19 @@ public class ObservatoryController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("command/auto_roof_close")]
-    public IActionResult SetAutoRoofClose()
-    {
-        return Ok(new
-		{
-			IsEnabled = _autoRoofService.IsEnabled,
-			Period = _autoRoofService.Period.TotalSeconds,
-        });
-    }
-
-    [HttpPost("command/auto_roof_close")]
-	public IActionResult SetAutoRoofClose(bool value)
+    [HttpPost("enable_auto_roof_close")]
+	public IActionResult EnableAutoRoofClose()
 	{
-		_autoRoofService.IsEnabled = value;
-		return RedirectToAction(nameof(SetAutoRoofClose));
+		_autoRoofService.IsEnabled = true;
+		return Ok();
 	}
+
+    [HttpPost("disable_auto_roof_close")]
+    public IActionResult DisablAutoRoofClose()
+    {
+        _autoRoofService.IsEnabled = false;
+        return Ok();
+    }
 
     #endregion
 
