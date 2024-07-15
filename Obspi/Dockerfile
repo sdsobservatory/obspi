@@ -14,7 +14,7 @@ RUN dotnet publish "Obspi.csproj" -c Release -a $TARGETARCH --no-restore -o /app
 
 FROM node:20.9.0 AS client
 WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH=/app/node_modules/.bin:$PATH
 COPY "Obspi/client/" ./
 RUN npm ci --silent
 RUN npm run build
