@@ -37,7 +37,7 @@ ASP.NET Core backend with a React frontend dashboard.
 # Build
 
 ```shell
-docker buildx build --push --pull -t registry.local.sdso.space/obspi -f Obspi/Dockerfile --platform linux/arm64 .
+docker buildx build -t obspi -f Obspi/Dockerfile --platform linux/arm64 .
 ```
 
 # Run
