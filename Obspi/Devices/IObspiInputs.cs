@@ -10,7 +10,7 @@ public interface IObspiInputs
     bool CloudWatcherUnsafe { get; set; }
     bool TiltJoshSafe { get; set; }
     bool TiltAlexSafe { get; set; }
-    bool Input6 { get; set; }
+    bool NoRain { get; set; }
     bool Input7 { get; set; }
     bool Input8 { get; set; }
     bool Input9 { get; set; }

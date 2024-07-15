@@ -54,7 +54,7 @@ public record ObspiInputs : IObspiInputs
         set => _banks[0][4] = value;
     }
     
-    public bool Input6
+    public bool NoRain
     {
         get => _banks[0][5];
         set => _banks[0][5] = value;

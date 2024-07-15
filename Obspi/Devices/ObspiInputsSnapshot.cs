@@ -44,7 +44,7 @@ public class ObspiInputsSnapshot : IObspiInputs
     public bool CloudWatcherUnsafe { get; set; }
     public bool TiltJoshSafe { get; set; }
     public bool TiltAlexSafe { get; set; }
-    public bool Input6 { get; set; }
+    public bool NoRain { get; set; }
     public bool Input7 { get; set; }
     public bool Input8 { get; set; }
     public bool Input9 { get; set; }
