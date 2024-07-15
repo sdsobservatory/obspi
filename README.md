@@ -51,3 +51,19 @@ or to run temporarily
 ```shell
 docker run -d --restart=unless-stopped --pull=always -p 8080:80 --name obspi --privileged registry.local.sdso.space/obspi
 ```
+
+# Deploy
+
+A github action is used to build the container image and it is hosted on ghcr.io.
+On the raspi in the observatory located in /home/pi/obspi is the `docker-compose.yml` 
+file and `variables.env` required to run the container.
+
+When a new container is needed, manually run the github action and wait for the build to complete.
+
+SSH into the pi and run the following:
+
+```shell
+cd ~/obspi
+docker compose down
+docker compose up -d
+```
