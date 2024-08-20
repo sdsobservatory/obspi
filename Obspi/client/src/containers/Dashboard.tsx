@@ -65,7 +65,7 @@ function Dashboard() {
             url={CAMERA_SOUTH_URL} />
           <AllSkyComponent
             hideHeader={true}
-            aspectRatio={"1/1"}
+            aspectRatio={1/1}
             name="All Sky"
             url={CAMERA_ALLSKY_URL} />
         </Stack>

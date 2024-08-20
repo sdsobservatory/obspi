@@ -28,7 +28,7 @@ function AllSkyComponent(props: AllSkyProps) {
                 : <CardHeader title={props.name} />
             }
             <CardMedia
-                sx={{ aspectRatio: props.aspectRatio ?? "1/1" }}
+                sx={{ aspectRatio: props.aspectRatio ?? 1/1 }}
                 component="img"
                 alt="All Sky"
                 image={imgSrc} />
