@@ -6,7 +6,7 @@ export const OBSPI_API_URL = "https://obspi.local.sdso.space/api";
 export const CAMERA_NORTH_URL = "https://mediamtx.local.sdso.space/north";
 export const CAMERA_WEST_URL = "https://mediamtx.local.sdso.space/west";
 export const CAMERA_SOUTH_URL = "https://mediamtx.local.sdso.space/south";
-export const CAMERA_ALLSKY_URL = "https://indiallsky.local.sdso.space/indi-allsky/latestimage";
+export const CAMERA_ALLSKY_URL = "https://allsky.local.sdso.space/api/image/latest/image";
 
 /* Grafana Embeds */
 export const GRAFANA_TEMPERATURE_EMBED_URL = "https://grafana.local.sdso.space/d-solo/f641e97b-06f3-49c7-bb26-a96e9f66bf98/overview?orgId=1&refresh=10s&panelId=1";
